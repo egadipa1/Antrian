@@ -10,33 +10,34 @@
 </head>
 
 <body>
-
     <div class="container mt-5">
         <div class="card p-4">
             <h3 class="text-center text-primary">Formulir Pendaftaran Cek Kesehatan</h3>
-            <form>
+            <form action="{{route('store')}}" method="POST">
+                @csrf
                 <!-- Nama Lengkap -->
                 <div class="mb-3">
                     <label for="nama" class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" id="nama" placeholder="Masukkan nama lengkap" required>
+                    <input type="text" class="form-control" id="nama" placeholder="Masukkan nama lengkap" required
+                        name="nama">
                 </div>
 
                 <!-- NIK -->
                 <div class="mb-3">
                     <label for="nik" class="form-label">NIK</label>
-                    <input type="text" class="form-control" id="nik" placeholder="Masukkan NIK" required>
+                    <input type="text" class="form-control" id="nik" placeholder="Masukkan NIK" required name="nik">
                 </div>
 
                 <!-- Tanggal Lahir -->
                 <div class="mb-3">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="date" class="form-control" id="tanggal_lahir" required>
+                    <input type="date" class="form-control" id="tanggal_lahir" required name="tglLahir">
                 </div>
 
                 <!-- Jenis Kelamin -->
                 <div class="mb-3">
                     <label class="form-label">Jenis Kelamin</label>
-                    <select class="form-select" id="jenis_kelamin">
+                    <select class="form-select" id="jenis_kelamin" name="jk">
                         <option>Jenis Kelamin</option>
                         <option>Perempuan</option>
                         <option>Laki-laki</option>
@@ -46,20 +47,15 @@
                 <!-- Alamat -->
                 <div class="mb-3">
                     <label for="alamat" class="form-label">Alamat</label>
-                    <textarea class="form-control" id="alamat" rows="3" placeholder="Masukkan alamat"
-                        required></textarea>
+                    <textarea class="form-control" id="alamat" rows="3" placeholder="Masukkan alamat" required
+                        name="alamat"></textarea>
                 </div>
 
                 <!-- Nomor HP -->
                 <div class="mb-3">
                     <label for="nomor_hp" class="form-label">Nomor HP</label>
-                    <input type="text" class="form-control" id="nomor_hp" placeholder="Masukkan nomor HP" required>
-                </div>
-
-                <!-- Tanggal Periksa -->
-                <div class="mb-3">
-                    <label for="tanggal_periksa" class="form-label">Tanggal Periksa</label>
-                    <input type="date" class="form-control" id="tanggal_periksa" required>
+                    <input type="text" class="form-control" id="nomor_hp" placeholder="Masukkan nomor HP" required
+                        name="noHp">
                 </div>
 
                 <!-- Tombol Submit -->
