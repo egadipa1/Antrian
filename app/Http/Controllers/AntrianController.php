@@ -23,5 +23,5 @@ class AntrianController extends Controller
         $data->Nomor_Telepon=$request->noHp;
 
         $data->save();
-    }
+    } 
 }
