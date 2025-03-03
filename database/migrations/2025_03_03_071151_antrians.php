@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('Tanggal_Antrian');
             $table->time('Waktu_Antrian');
             $table->string('Status_Antrian', 20);
-            $table->unsignedBigInteger('ID_Dokter')->nullable();
             $table->timestamps();
 
             $table->foreign('ID_Pasien')->references('ID_Pasien')->on('pasiens');
