@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('ID_Poli');
             $table->string('Nama_Poli');
             $table->text('Deskripsi_Poli')->nullable();
+            $table->
             $table->timestamps();
         });
     }
