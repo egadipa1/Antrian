@@ -13,12 +13,13 @@
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach ($polis as $poli) 
+        
                <div class="col">
-                <div class="card h-100 text-center bg-primary bg-opacity-75">
+                <a href="{{ route('login', ['ID_Poli' => $poli->ID_Poli]) }}" id="Poli" class="card h-100 text-center bg-primary bg-opacity-75">
                     <div class="card-body">
                         <h5 class="card-title">{{$poli->Nama_Poli}}</h5>
                     </div>
-                </div>
+                </a>
                </div>
             @endforeach
     </div>

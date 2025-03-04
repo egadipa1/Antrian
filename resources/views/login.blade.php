@@ -116,11 +116,10 @@
                     var tes = confirm("Apakah Anda Ingin Mendaftar??");
                     if (tes == true){
                       // kalau ingin daftar akan dialihkan ke halaman pendaftaran
-                      window.location.href = "https://example.com/registration";
+                      window.location.href = "{{route('create')}}";
                     } else {
                       alert('Anda Tidak Menjadi Mendaftar');
                     }
-                    window.location.href = "https://example.com/registration"; /// indah ke halamanan pendaftaran
                 }
             }
         });
