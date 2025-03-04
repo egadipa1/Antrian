@@ -12,16 +12,15 @@
         <h1 class="display-4">Rumah Sakit Sehat Selalu</h1>
     </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach ($antrian as $antr) {
+        @foreach ($polis as $poli) 
                <div class="col">
                 <div class="card h-100 text-center bg-primary bg-opacity-75">
                     <div class="card-body">
-                        <h5 class="card-title">{{ $ant->Nama_Poli }}</h5>
-                        <p class="queue-number">{{  }}</p>
+                        <h5 class="card-title">{{$poli->Nama_Poli}}</h5>
                     </div>
                 </div>
                </div>
-            }
+            @endforeach
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
