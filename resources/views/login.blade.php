@@ -75,11 +75,11 @@
 <body>
     <div class="login-container">
         <h2>Antrian {{$data->Nama_Poli}}</h2>
-        <form class="container" id="nikForm">
+        <form class="container" id="nikForm" >
             {{-- @csrf --}}
             <div class="form-box">
                 <label for="nik">NIK:</label>
-                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK" required />
+                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK"/>
                 <button type="submit" id="btn">Dapatkan No Antrian</button>
             </div>
         </form>
@@ -89,6 +89,7 @@
     <script>
         const form = document.getElementById("nikForm");
         const nikInput = document.getElementById("nik");
+        const Id_poli = {{ $data->ID_Poli }};
 
         // Tangani submit form
         form.addEventListener("submit", function(e) {
@@ -123,12 +124,32 @@
             .then(data => {
                 // Jika data.found = true => NIK terdaftar
                 if (data.found) {
-                    Swal.fire({
-                        title: "Berhasil!",
-                        text: "Anda Mendapatkan No Antrian",
-                        icon: "success",
-                        footer: '<a href="#">Cetak No Antrian</a>',
-                    });
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route('getAntrian')  }}'; // Ganti dengan nama route POST Anda
+
+
+                    const Nik = document.createElement('input');
+                    Nik.type = 'hidden';
+                    Nik.name = 'Nik';
+                    Nik.value = nik; // Ambil token CSRF dari Blade
+                    form.appendChild(Nik);
+                    
+                    const idPoli = document.createElement('input');
+                    idPoli.type = 'hidden';
+                    idPoli.name = 'idPoli';
+                    idPoli.value = Id_poli; // Ambil token CSRF dari Blade
+                    form.appendChild(idPoli);
+
+                    // Tambahkan token CSRF
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}'; // Ambil token CSRF dari Blade
+                    form.appendChild(csrfToken);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
                 } else {
                     // Jika NIK tidak ditemukan => tawarkan pendaftaran
                     Swal.fire({

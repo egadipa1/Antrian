@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Antrian;
 use App\Models\Pasiens;
 use App\Models\Poli;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +60,35 @@ class AntrianController extends Controller
         $data->Jenis_Kelamin = $request->jk;
         $data->Alamat = $request->alamat;
         $data->Nomor_Telepon = $request->noHp;
-
         $data->save();
 
         return redirect()->route('index')->with('succes', 'Pendaftaran Berhasil');
+    }
+
+    function getAntrian(Request $request){
+        $nik = $request->Nik;
+        $id_poli = $request->idPoli;
+        // Ambil ID_Pasien sebagai integer tunggal
+        $pasien = Pasiens::where('NIK', $nik)->first();
+
+
+        $id_pasien = $pasien->ID_Pasien;
+
+        // Ambil Nomor_Antrian terakhir sebagai integer
+        $noAntrianAkhir = Antrian::orderBy('Nomor_Antrian', 'DESC')->value('Nomor_Antrian');
+
+        if ($noAntrianAkhir) {
+            $noAntrian = $noAntrianAkhir + 1;
+        } else {
+            $noAntrian = 1;
+        }
+
+        $data = new Antrian();
+        $data->ID_Pasien = $id_pasien;
+        $data->ID_Poli = $id_poli;
+        $data->Nomor_Antrian = $noAntrian;
+        $data->save();
+
+        return redirect()->route('index');
     }
 }
