@@ -15,7 +15,7 @@
         @foreach ($polis as $poli) 
         
                <div class="col">
-                <a href="{{ route('login') }}" id="Poli" Value="{{ $poli->Nama_Poli }}" class="card h-100 text-center bg-primary bg-opacity-75">
+                <a href="{{ route('login', ['ID_Poli' => $poli->ID_Poli]) }}" id="Poli" class="card h-100 text-center bg-primary bg-opacity-75">
                     <div class="card-body">
                         <h5 class="card-title">{{$poli->Nama_Poli}}</h5>
                     </div>
