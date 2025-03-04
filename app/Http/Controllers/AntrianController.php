@@ -3,10 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pasiens;
+use App\Models\Poli;
 use Illuminate\Http\Request;
 
 class AntrianController extends Controller
 {
+
+    function index(){
+        $data=Poli::get();
+        
+        view()->share([
+           'polis' => $data 
+        ]);
+
+        return view('home');
+    }
     function create()
     {
         return view('daftar');
