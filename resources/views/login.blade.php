@@ -132,7 +132,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
                         body: JSON.stringify({ 
-                            NIK: nik,
+                            Nik: nik,
                             idPoli:Id_poli
                         })
                     }).then(response =>{
