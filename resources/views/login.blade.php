@@ -124,32 +124,27 @@
             .then(data => {
                 // Jika data.found = true => NIK terdaftar
                 if (data.found) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '{{ route('getAntrian')  }}'; // Ganti dengan nama route POST Anda
-
-
-                    const Nik = document.createElement('input');
-                    Nik.type = 'hidden';
-                    Nik.name = 'Nik';
-                    Nik.value = nik; // Ambil token CSRF dari Blade
-                    form.appendChild(Nik);
-                    
-                    const idPoli = document.createElement('input');
-                    idPoli.type = 'hidden';
-                    idPoli.name = 'idPoli';
-                    idPoli.value = Id_poli; // Ambil token CSRF dari Blade
-                    form.appendChild(idPoli);
-
-                    // Tambahkan token CSRF
-                    const csrfToken = document.createElement('input');
-                    csrfToken.type = 'hidden';
-                    csrfToken.name = '_token';
-                    csrfToken.value = '{{ csrf_token() }}'; // Ambil token CSRF dari Blade
-                    form.appendChild(csrfToken);
-                    
-                    document.body.appendChild(form);
-                    form.submit();
+                    fetch('{{ route('getAntrian') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Token CSRF dari meta
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ 
+                            Nik: nik,
+                            idPoli:Id_poli
+                        })
+                    }).then(response =>{
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "Anda Mendapatkan No Antrian",
+                            icon: "success",
+                            confirmButtonText:"Cetak Antrian"
+                        }).then((result)=>{
+                            
+                        });
+                    });
                 } else {
                     // Jika NIK tidak ditemukan => tawarkan pendaftaran
                     Swal.fire({

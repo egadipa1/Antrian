@@ -75,7 +75,7 @@ class AntrianController extends Controller
         $id_pasien = $pasien->ID_Pasien;
 
         // Ambil Nomor_Antrian terakhir sebagai integer
-        $noAntrianAkhir = Antrian::orderBy('Nomor_Antrian', 'DESC')->value('Nomor_Antrian');
+        $noAntrianAkhir = Antrian::where('ID_Poli', $id_poli)->orderBy('Nomor_Antrian', 'DESC')->value('Nomor_antrian');
 
         if ($noAntrianAkhir) {
             $noAntrian = $noAntrianAkhir + 1;
@@ -89,6 +89,6 @@ class AntrianController extends Controller
         $data->Nomor_Antrian = $noAntrian;
         $data->save();
 
-        return redirect()->route('index');
+        return response()->json();
     }
 }
