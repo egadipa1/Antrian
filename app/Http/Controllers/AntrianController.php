@@ -37,7 +37,7 @@ class AntrianController extends Controller
         $find = Pasiens::where('NIK', $nik)->exists();
 
         return response()->json([
-            'found' => $find
+            'found' => $find,
         ]);
     }
     function create()
@@ -69,26 +69,34 @@ class AntrianController extends Controller
         $nik = $request->Nik;
         $id_poli = $request->idPoli;
         // Ambil ID_Pasien sebagai integer tunggal
-        $pasien = Pasiens::where('NIK', $nik)->first();
-
-
-        $id_pasien = $pasien->ID_Pasien;
-
+        $pasien = Pasiens::where('NIK', $nik)->value('ID_Pasien');
+        $cekAntrian = Antrian::join('pasiens', 'antrians.ID_Pasien','=','pasiens.ID_Pasien')->join('polis','antrians.ID_Poli','=','polis.ID_Poli')->where('pasiens.NIK', $nik)->where('antrians.ID_Poli', $id_poli)->exists();
         // Ambil Nomor_Antrian terakhir sebagai integer
         $noAntrianAkhir = Antrian::where('ID_Poli', $id_poli)->orderBy('Nomor_Antrian', 'DESC')->value('Nomor_antrian');
 
-        if ($noAntrianAkhir) {
-            $noAntrian = $noAntrianAkhir + 1;
-        } else {
-            $noAntrian = 1;
+        if(!$cekAntrian){
+            if ($noAntrianAkhir) {
+                $noAntrian = $noAntrianAkhir + 1;
+            } else {
+                $noAntrian = 1;
+            }
+
+            $data = new Antrian();
+            $data->ID_Pasien = $pasien;
+            $data->ID_Poli = $id_poli;
+            $data->Nomor_Antrian = $noAntrian;
+            $data->save();
+
+            return response()->json([
+                'Berhasil' => true
+            ]);
+        }else{
+            return response()->json([
+                'Berhasil' => false
+            ]);
         }
+        
 
-        $data = new Antrian();
-        $data->ID_Pasien = $id_pasien;
-        $data->ID_Poli = $id_poli;
-        $data->Nomor_Antrian = $noAntrian;
-        $data->save();
-
-        return response()->json();
+        
     }
 }

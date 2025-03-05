@@ -118,12 +118,16 @@
                     // Token CSRF dari meta
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 },
-                body: JSON.stringify({ NIK: nik })
+                body: JSON.stringify({
+                    NIK: nik,
+                    idPoli: Id_poli
+                })
             })
             .then(response => response.json())
             .then(data => {
                 // Jika data.found = true => NIK terdaftar
                 if (data.found) {
+                    console.log(data.Ada);
                     fetch('{{ route('getAntrian') }}', {
                         method: 'POST',
                         headers: {
@@ -135,15 +139,31 @@
                             Nik: nik,
                             idPoli:Id_poli
                         })
-                    }).then(response =>{
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: "Anda Mendapatkan No Antrian",
-                            icon: "success",
-                            confirmButtonText:"Cetak Antrian"
-                        }).then((result)=>{
-                            
-                        });
+                    }).then(response =>response.json())
+                    .then(data =>{
+                        if(data.Berhasil){
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Anda Mendapatkan No Antrian",
+                                icon: "success",
+                                confirmButtonText:"Cetak Antrian"
+                            }).then((result)=>{
+                                if(result.isConfirmed){
+                                    
+                                }
+                            });
+                        }else if(!data.Berhasil){
+                            Swal.fire({
+                                title: "Anda Sudah Antri Di Poli Ini!",
+                                icon: "error",
+                                confirmButtonText:"Ok"
+                            }).then((result)=>{
+                                if(result.isConfirmed){
+                                    
+                                }
+                            });
+                        }
+                        
                     });
                 } else {
                     // Jika NIK tidak ditemukan => tawarkan pendaftaran
