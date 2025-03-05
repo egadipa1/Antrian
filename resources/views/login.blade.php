@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{csrf_token()}}" />
+
     <title>Login</title>
     <style>
         /* Menyiapkan body untuk mengisi seluruh halaman */
@@ -72,59 +74,109 @@
 
 <body>
     <div class="login-container">
-        <h2>Login</h2>
-        <form class="container" id="nikForm">
+        <h2>Antrian {{$data->Nama_Poli}}</h2>
+        <form class="container" id="nikForm" >
+            {{-- @csrf --}}
             <div class="form-box">
                 <label for="nik">NIK:</label>
-                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK" required />
-                <button type="button" id="btn">Dapatkan No Antrian</button>
+                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK"/>
+                <button type="submit" id="btn">Dapatkan No Antrian</button>
             </div>
         </form>
     </div>
-
+<!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Get the form and button elements
         const form = document.getElementById("nikForm");
-        const btn = document.getElementById("btn");
         const nikInput = document.getElementById("nik");
+        const Id_poli = {{ $data->ID_Poli }};
 
-        // Function to handle form submission
-        btn.addEventListener("click", function () {
-            const nik = nikInput.value.trim(); // Get the NIK input value
+        // Tangani submit form
+        form.addEventListener("submit", function(e) {
+            // Mencegah reload halaman
+            e.preventDefault();
 
-            // Check if the NIK input is empty
-            if (nik === "") {
+            // Ambil nilai NIK dari input
+            let nik = nikInput.value.trim();
+
+            // Cek jika NIK kosong
+            if (!nik) {
                 Swal.fire({
                     title: "Peringatan!",
                     text: "NIK harus diisi!",
                     icon: "warning",
                     confirmButtonText: "OK",
                 });
-            } else {
-                // Mengecek apakah nik sudah terdaftar atau belum
-                const Pendaftaran = ["1234567890", "9876543210"]; // mengambil dari database agar bisa login
-                if (Pendaftaran.includes(nik)) {
-                    Swal.fire({
-                        title: "Berhasil!",
-                        text: "Anda Mendapatkan No Antrian",
-                        icon: "success",
-                        footer: '<a href="#">Cetak No Antrian</a>',
-                    });
-                } else {
-                    alert('Anda Belum Mendaftar');
-                    var tes = confirm("Apakah Anda Ingin Mendaftar??");
-                    if (tes == true){
-                      // kalau ingin daftar akan dialihkan ke halaman pendaftaran
-                      window.location.href = "https://example.com/registration";
-                    } else {
-                      alert('Anda Tidak Menjadi Mendaftar');
-                    }
-                    window.location.href = "https://example.com/registration"; /// indah ke halamanan pendaftaran
-                }
+                return; // hentikan di sini
             }
+
+            // Lakukan fetch POST ke route 'verified'
+            fetch('{{ route('verified') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Token CSRF dari meta
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({ NIK: nik })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Jika data.found = true => NIK terdaftar
+                if (data.found) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '{{ route('getAntrian')  }}'; // Ganti dengan nama route POST Anda
+
+
+                    const Nik = document.createElement('input');
+                    Nik.type = 'hidden';
+                    Nik.name = 'Nik';
+                    Nik.value = nik; // Ambil token CSRF dari Blade
+                    form.appendChild(Nik);
+                    
+                    const idPoli = document.createElement('input');
+                    idPoli.type = 'hidden';
+                    idPoli.name = 'idPoli';
+                    idPoli.value = Id_poli; // Ambil token CSRF dari Blade
+                    form.appendChild(idPoli);
+
+                    // Tambahkan token CSRF
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}'; // Ambil token CSRF dari Blade
+                    form.appendChild(csrfToken);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    // Jika NIK tidak ditemukan => tawarkan pendaftaran
+                    Swal.fire({
+                        title: "Anda Belum Mendaftar",
+                        icon: "error",
+                        showCancelButton: true,
+                        confirmButtonText: "Daftar",
+                        cancelButtonText: "Batal"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Arahkan ke halaman pendaftaran
+                            window.location.href = "{{ route('create') }}";
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Terjadi kesalahan. Silakan coba lagi.",
+                    icon: "error"
+                });
+            });
         });
     </script>
+
 </body>
 
 </html>
