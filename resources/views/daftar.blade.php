@@ -13,7 +13,7 @@
     <div class="container mt-5">
         <div class="card p-4">
             <h3 class="text-center text-primary">Formulir Pendaftaran Cek Kesehatan</h3>
-            <form action="{{route('store')}}" method="POST">
+            <form action="{{route('store', $poli)}}" method="POST">
                 @csrf
                 <!-- Nama Lengkap -->
                 <div class="mb-3">
@@ -65,6 +65,12 @@
             </form>
         </div>
     </div>
+    
+    <script>
+        @if (session('failed'))
+            alert('{{session("failed")}}');
+        @endif
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

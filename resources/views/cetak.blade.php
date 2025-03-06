@@ -59,9 +59,6 @@
         <p>Terima Kasih Sudah Mengantri</p>
         <?php echo date("l, d-M-y,") ?>
         <?php echo date("h:i a") ?>
-
-
-
     </div>
 </body>
 

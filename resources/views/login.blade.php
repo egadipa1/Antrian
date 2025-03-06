@@ -75,16 +75,16 @@
 <body>
     <div class="login-container">
         <h2>Antrian {{$data->Nama_Poli}}</h2>
-        <form class="container" id="nikForm" >
+        <form class="container" id="nikForm">
             {{-- @csrf --}}
             <div class="form-box">
                 <label for="nik">NIK:</label>
-                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK"/>
+                <input type="text" id="nik" name="nik" placeholder="Masukkan NIK" />
                 <button type="submit" id="btn">Dapatkan No Antrian</button>
             </div>
         </form>
     </div>
-<!-- SweetAlert2 -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const form = document.getElementById("nikForm");
@@ -92,7 +92,7 @@
         const Id_poli = {{ $data->ID_Poli }};
 
         // Tangani submit form
-        form.addEventListener("submit", function(e) {
+        form.addEventListener("submit", function (e) {
             // Mencegah reload halaman
             e.preventDefault();
 
@@ -120,55 +120,56 @@
                 },
                 body: JSON.stringify({ NIK: nik })
             })
-            .then(response => response.json())
-            .then(data => {
-                // Jika data.found = true => NIK terdaftar
-                if (data.found) {
-                    fetch('{{ route('getAntrian') }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // Token CSRF dari meta
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({ 
-                            Nik: nik,
-                            idPoli:Id_poli
-                        })
-                    }).then(response =>{
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: "Anda Mendapatkan No Antrian",
-                            icon: "success",
-                            confirmButtonText:"Cetak Antrian"
-                        }).then((result)=>{
-                            
+                .then(response => response.json())
+                .then(data => {
+                    // Jika data.found = true => NIK terdaftar
+                    if (data.found) {
+                        fetch('{{ route('getAntrian') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                // Token CSRF dari meta
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({
+                                Nik: nik,
+                                idPoli: Id_poli
+                            })
+                        }).then(response => {
+                            Swal.fire({
+                                title: "Berhasil!",
+                                text: "Anda Mendapatkan No Antrian",
+                                icon: "success",
+                                confirmButtonText: "Cetak Antrian"
+                            }).then((result) => {
+                                window.location.href = "{{ route('cetak', $antrian) }}";
+
+                            });
                         });
-                    });
-                } else {
-                    // Jika NIK tidak ditemukan => tawarkan pendaftaran
+                    } else {
+                        // Jika NIK tidak ditemukan => tawarkan pendaftaran
+                        Swal.fire({
+                            title: "Anda Belum Mendaftar",
+                            icon: "error",
+                            showCancelButton: true,
+                            confirmButtonText: "Daftar",
+                            cancelButtonText: "Batal"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Arahkan ke halaman pendaftaran
+                                window.location.href = "{{ route('create', $data->ID_Poli) }}";
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
                     Swal.fire({
-                        title: "Anda Belum Mendaftar",
-                        icon: "error",
-                        showCancelButton: true,
-                        confirmButtonText: "Daftar",
-                        cancelButtonText: "Batal"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Arahkan ke halaman pendaftaran
-                            window.location.href = "{{ route('create') }}";
-                        }
+                        title: "Error",
+                        text: "Terjadi kesalahan. Silakan coba lagi.",
+                        icon: "error"
                     });
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                Swal.fire({
-                    title: "Error",
-                    text: "Terjadi kesalahan. Silakan coba lagi.",
-                    icon: "error"
                 });
-            });
         });
     </script>
 

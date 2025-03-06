@@ -14,6 +14,7 @@ class AntrianController extends Controller
     function index()
     {
         $data = Poli::get();
+        // dd($data);
 
         view()->share([
             'polis' => $data
@@ -22,47 +23,60 @@ class AntrianController extends Controller
         return view('home');
     }
 
-    function login($ID_Poli)
+    function login($ID_Poli, $ID_Antrian)
     {
 
         $data = Poli::findOrFail($ID_Poli);
+        // dd($data);     
+        
+        view()->share([
+            'data' => $data,
+            'antrian' => $ID_Antrian
+        ]);
 
-        return view('login', compact('data'));
+        return view('login');
     }
 
     function verified(Request $request)
     {
         $nik = $request->NIK;
-
+        
         $find = Pasiens::where('NIK', $nik)->exists();
 
         return response()->json([
             'found' => $find
         ]);
     }
-    function create()
+    function create($ID_Poli)
     {
-
-
+    
         // $poli = Poli::findOrFail($ID_Poli);
-         
+        
+        view()->share([
+            'poli' =>$ID_Poli
+        ]);
         
         return view('daftar');
     }
 
-    function store(Request $request)
+    function store(Request $request, $ID_Poli )
     {
+        $cek = Pasiens::where('NIK', $request->nik)->first();
+        if($cek==true) {
+            // dd('sudah terdaftar');
+            return redirect()->back()->with('failed', 'sudah daftars');
+        }else{
+            $data = new Pasiens();
+            $data->Nama_Pasien = $request->nama;
+            $data->Tanggal_Lahir = $request->tglLahir;
+            $data->NIK = $request->nik;
+            $data->Jenis_Kelamin = $request->jk;
+            $data->Alamat = $request->alamat;
+            $data->Nomor_Telepon = $request->noHp;
+            $data->save();
+        }
 
-        $data = new Pasiens();
-        $data->Nama_Pasien = $request->nama;
-        $data->Tanggal_Lahir = $request->tglLahir;
-        $data->NIK = $request->nik;
-        $data->Jenis_Kelamin = $request->jk;
-        $data->Alamat = $request->alamat;
-        $data->Nomor_Telepon = $request->noHp;
-        $data->save();
-
-        return redirect()->route('index')->with('succes', 'Pendaftaran Berhasil');
+        return redirect()->route('login', $ID_Poli);
     }
 
     function getAntrian(Request $request){
@@ -70,7 +84,7 @@ class AntrianController extends Controller
         $id_poli = $request->idPoli;
         // Ambil ID_Pasien sebagai integer tunggal
         $pasien = Pasiens::where('NIK', $nik)->first();
-
+        
 
         $id_pasien = $pasien->ID_Pasien;
 
@@ -90,6 +104,10 @@ class AntrianController extends Controller
         $data->save();
 
         return response()->json();
+    }
+
+    function cetak() {
+        return view('cetak');
     }
 
 }
